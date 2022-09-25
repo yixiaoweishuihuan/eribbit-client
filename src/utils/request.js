@@ -2,7 +2,7 @@ import axios from 'axios'
 import store from '@/store'
 import router from '@/router'
 // 导出基地址 提供给其他非axios的请求使用
-export const baseURL = ''
+export const baseURL = 'http://pcapi-xiaotuxian-front-devtest.itheima.net/'
 const instance = axios.create({
   baseURL,
   timeout: 5000
@@ -36,7 +36,7 @@ instance.interceptors.response.use(
   }
 )
 
-export default (url, method, data) => {
+export default (url, method = 'get', data) => {
   return instance({
     url,
     method,
