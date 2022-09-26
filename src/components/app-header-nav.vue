@@ -1,12 +1,19 @@
 <template>
   <ul class="app-header-nav">
     <li class="home"><RouterLink to="/">首页</RouterLink></li>
-    <li v-for="item in list" :key="item.id">
-      <routerLink to="/">{{ item.name }}</routerLink>
-      <div class="layer">
+    <li
+      v-for="item in list"
+      :key="item.id"
+      @mouseenter="open(item)"
+      @mouseleave="hidden(item)"
+    >
+      <routerLink :to="`/category/${item.id}`" @click="hidden(item)">{{
+        item.name
+      }}</routerLink>
+      <div class="layer" :class="{ show: item.open }">
         <ul>
           <li v-for="sub in item.children" :key="sub.id">
-            <routerLink to="/">
+            <routerLink :to="`/category/sub/${item.id}`" @click="hidden(item)">
               <img :src="sub.picture" alt="" />
               <p>{{ sub.name }}</p>
             </routerLink>
@@ -27,7 +34,13 @@ export default {
     const list = computed(() => {
       return store.state.category.list
     })
-    return { list }
+    const open = ({ id }) => {
+      store.commit('category/open', id)
+    }
+    const hidden = ({ id }) => {
+      store.commit('category/hidden', id)
+    }
+    return { list, open, hidden }
   }
 }
 </script>
@@ -55,10 +68,10 @@ export default {
         color: @xtxColor;
         border-bottom: 1px solid @xtxColor;
       }
-      > .layer {
-        height: 132px;
-        opacity: 1;
-      }
+      // > .layer {
+      //   height: 132px;
+      //   opacity: 1;
+      // }
     }
   }
 }
@@ -73,6 +86,10 @@ export default {
   opacity: 0;
   box-shadow: 0 0 5px #ccc;
   transition: all 0.2s 0.1s;
+  &.show {
+    height: 132px;
+    opacity: 1;
+  }
   ul {
     display: flex;
     flex-wrap: wrap;
