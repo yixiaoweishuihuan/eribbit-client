@@ -1,42 +1,18 @@
 <template>
-  <div class="container">
-    <button style="margin-right:10px" @click="login">登录</button>
-    <button @click="logOut">退出</button>
+  <div class="page-home">
+    <div class="home-entry">
+      <div class="container">
+        <!-- 左侧分类 -->
+        <HomeCategory />
+      </div>
+    </div>
   </div>
 </template>
-
 <script>
-import { useStore } from 'vuex'
+import HomeCategory from './components/home-category'
 export default {
-  name: 'Home',
-  setup () {
-    const store = useStore()
-    const login = () => {
-      store.commit('user/setUser', {
-        id: '666',
-        avator: 'http://xxx.png',
-        nickname: 'zhongyingdong',
-        account: '钟鹰东',
-        mobile: '17770064059',
-        token: 'token666'
-      })
-    }
-    const logOut = () => {
-      store.commit('user/setUser', {})
-    }
-    return {
-      login,
-      logOut
-    }
-  }
+  name: 'PageHome',
+  components: { HomeCategory }
 }
 </script>
-
-<style lang="less" scoped>
-.container {
-  @height: 500px;
-  height: @height;
-  line-height: @height;
-  text-align: center;
-}
-</style>
+<style scoped lang="less"></style>
