@@ -17,12 +17,10 @@ export default {
       state.list = headCategory
     },
     open (state, id) {
-      console.log('id: ', id)
       const currentCategary = state.list.find(item => item.id === id)
       currentCategary.open = true
     },
     hidden (state, id) {
-      console.log('id: ', id)
       const currentCategary = state.list.find(item => item.id === id)
       currentCategary.open = false
     }
