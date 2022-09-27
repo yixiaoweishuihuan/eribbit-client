@@ -13,7 +13,7 @@ export default createStore({
   plugins: [
     createPresistedstate({
       key: 'erabbit-client',
-      paths: ['user', 'category'],
+      paths: ['user', 'cart'],
       storage: window.localStorage
     })
   ]
