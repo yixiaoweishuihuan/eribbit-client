@@ -1,5 +1,5 @@
 <template>
-  <div class="xtx-carousel">
+  <div class="xtx-carousel" @mouseenter="stop" @mouseleave="start">
     <!-- 轮播图图片 -->
     <ul class="carousel-body">
       <li
@@ -14,16 +14,17 @@
       </li>
     </ul>
     <!-- 上一张 -->
-    <a href="javascript:;" class="carousel-btn prev"
+    <a href="javascript:;" class="carousel-btn prev" @click="toogle(-1)"
       ><i class="iconfont icon-angle-left"></i
     ></a>
     <!-- 下一张 -->
-    <a href="javascript:;" class="carousel-btn next"
+    <a href="javascript:;" class="carousel-btn next" @click="toogle(1)"
       ><i class="iconfont icon-angle-right"></i
     ></a>
     <!-- 指示器 -->
     <div class="carousel-indicator">
       <span
+        @click="index = i"
         v-for="(item, i) in sliders"
         :key="i"
         :class="{ active: index === i }"
@@ -33,19 +34,90 @@
 </template>
 
 <script>
-import { ref } from 'vue'
+import { onUnmounted, ref, watch } from 'vue'
 export default {
   name: 'XtxCarousel',
   props: {
+    // 轮播图数据
     sliders: {
       type: Array,
       default: () => []
+    },
+    // 是否自动轮播
+    autoPlay: {
+      type: Boolean,
+      default: false
+    },
+    // 自动轮播的时间间隔
+    duration: {
+      type: Number,
+      default: 3000
     }
   },
-  setup () {
+  setup (props) {
     // 默认显示的图片的索引
     const index = ref(0)
-    return { index }
+
+    // 自动轮播图的逻辑
+    let timer = null
+
+    // 自动轮播
+    const autoPlayFn = () => {
+      clearInterval(timer)
+      timer = setInterval(() => {
+        index.value++
+        if (index.value >= props.sliders.length) {
+          index.value = 0
+        }
+      }, props.duration)
+    }
+
+    watch(
+      () => props.sliders,
+      newValue => {
+        // 有数据&开启自动播放，才调用自动播放函数
+        if (newValue.length && props.autoPlay) {
+          index.value = 0
+          autoPlayFn()
+        }
+      },
+      { immediate: true }
+    )
+
+    // 鼠标进入停止，移出开启自动，前提条件：autoPlay为true
+
+    // 鼠标移入 暂停播放
+    const stop = () => {
+      if (timer) clearInterval(timer)
+    }
+
+    // 鼠标移出 开始播放
+    const start = () => {
+      if (props.sliders.length && props.autoPlay) {
+        autoPlayFn()
+      }
+    }
+
+    // 上一张 下一张图片
+    const toogle = step => {
+      const newIndex = index.value + step
+      if (newIndex >= props.sliders.length) {
+        index.value = 0
+        return
+      }
+      if (newIndex < 0) {
+        index.value = props.sliders.length - 1
+        return
+      }
+      index.value = newIndex
+    }
+
+    // 组件销毁 清除计时器
+    onUnmounted(() => {
+      clearInterval(timer)
+    })
+
+    return { index, start, stop, toogle }
   }
 }
 </script>
